@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TrackerEnabledDbContext.Common.Interfaces;
 
 namespace TrackerEnabledDbContext.Common.Models
 {
@@ -10,33 +11,28 @@ namespace TrackerEnabledDbContext.Common.Models
     ///     For the audit purpose. Only selected tables can be tracked with the help of TrackChangesAttribute Attribute present
     ///     in the common library.
     /// </summary>
-    public class AuditLog
+    public class AuditLog: IUnTrackable
     {
-        public AuditLog()
-        {
-            LogDetails = new List<AuditLogDetail>();
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int AuditLogId { get; set; }
+        public long AuditLogId { get; set; }
 
         public string UserName { get; set; }
 
         [Required]
-        public DateTimeOffset EventDateUTC { get; set; }
+        public DateTime EventDateUTC { get; set; }
 
         [Required]
         public EventType EventType { get; set; }
 
         [Required]
-        [MaxLength(256)]
+        [MaxLength(512)]
         public string TypeFullName { get; set; }
 
         [Required]
         [MaxLength(256)]
         public string RecordId { get; set; }
 
-        public virtual ICollection<AuditLogDetail> LogDetails { get; set; }
+        public virtual ICollection<AuditLogDetail> LogDetails { get; set; } = new List<AuditLogDetail>();
     }
 }

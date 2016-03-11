@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TrackerEnabledDbContext.Common.Interfaces;
 
 namespace TrackerEnabledDbContext.Common.Models
 {
-    public class AuditLogDetail
+    public class AuditLogDetail : IUnTrackable
     {
         [Key]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
 
         [Required]
         [MaxLength(256)]
@@ -16,7 +18,7 @@ namespace TrackerEnabledDbContext.Common.Models
 
         public string NewValue { get; set; }
 
-        public virtual int AuditLogId { get; set; }
+        public virtual long AuditLogId { get; set; }
 
         [ForeignKey("AuditLogId")]
         public virtual AuditLog Log { get; set; }

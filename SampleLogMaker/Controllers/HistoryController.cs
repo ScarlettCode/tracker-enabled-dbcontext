@@ -34,7 +34,7 @@ namespace SampleLogMaker.Controllers
                     case EventType.Added: // added
                         vm.Add(new AddedHistoryVM
                         {
-                            Date = log.EventDateUTC.ToLocalTime().DateTime,
+                            Date = log.EventDateUTC.ToLocalTime(),
                             LogId = log.AuditLogId,
                             RecordId = log.RecordId,
                             TypeFullName = log.TypeFullName,
@@ -46,7 +46,7 @@ namespace SampleLogMaker.Controllers
                     case EventType.Deleted: //deleted
                         vm.Add(new DeletedHistoryVM
                         {
-                            Date = log.EventDateUTC.ToLocalTime().DateTime,
+                            Date = log.EventDateUTC.ToLocalTime(),
                             LogId = log.AuditLogId,
                             RecordId = log.RecordId,
                             TypeFullName = log.TypeFullName,
@@ -59,7 +59,7 @@ namespace SampleLogMaker.Controllers
                         vm.Add(new ChangedHistoryVM
                         {
                             Details = log.LogDetails.Select(x => new LogDetail { PropertyName = x.PropertyName, NewValue = x.NewValue, OldValue = x.OriginalValue }),
-                            Date = log.EventDateUTC.ToLocalTime().DateTime,
+                            Date = log.EventDateUTC.ToLocalTime(),
                             LogId = log.AuditLogId,
                             RecordId = log.RecordId,
                             TypeFullName = log.TypeFullName,
@@ -73,14 +73,14 @@ namespace SampleLogMaker.Controllers
             return vm;
         }
 
-        public PartialViewResult EntityHistory(string entity, object entityId)
+        public PartialViewResult EntityHistory(string typeFullName, object entityId)
         {
             var db = new ApplicationDbContext();
-            var auditLogs = db.GetLogs(entity, entityId)
+            var auditLogs = db.GetLogs(typeFullName, entityId)
                 .OrderByDescending(x=>x.EventDateUTC);
             var viewModels = ConvertToHistoryViewModel(auditLogs);
 
-            ViewBag.EntityType = entity;
+            ViewBag.EntityType = typeFullName;
             ViewBag.EntityId = entityId;
 
             return PartialView("_EntityHistory", viewModels);
